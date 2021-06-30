@@ -44,25 +44,25 @@ passport.use('local-login', new localStrategy({
 			if(err) return done(err);
 
 			if(rows.length) {
-				console.log('existed user')
-				return done(null, false, {message : 'your email is already used'})
+				return done(null, {'email' : email, 'id' : rows[0].SEQ});
 			} else {
-				var sql = {email: email, pwd:pwd};
-				var query = connection.query('insert into back_node set ?', sql, function(err,rows) {
-					if(err) throw err
-					return done(null, {'email' : email, 'id' : rows.insertId});
-				})
-
+				return done(null, false, {'message' : 'your login info is not found'});
 			}
 		})
 	}
 ));
 
-router.post('/', passport.authenticate('local-join', {
-    successRedirect: '/main',
-    failureRedirect: '/join',
-    failureFlash: true })
-)
+router.post('/', function(req, res, next) {
+    passport.authenticate('local-login', function(err, user, info) {
+        if(err){res.status(500).json(err);}
+        if(!user) {return res.status(401).json(info.message)}
+        
+        req.logIn(user, function(err) {
+            if (err) return next(err); 
+            return res.json(user);
+        });
+    })(req, res, next)
+})
 
 // router.post('/', function(req, res){
 //     var body = req.body;

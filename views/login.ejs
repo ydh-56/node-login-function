@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>email from</title>
+    
 </head>
 <body>
     <form action="/email/form" method="post">
@@ -16,9 +17,9 @@
 
     <script>
         document.querySelector('.ajaxsend').addEventListener('click', function(){
-            var email = document.getElementsByName('eamil')[0].value
+            var email = document.getElementsByName('email')[0].value;
             var pwd = document.getElementsByName('pwd')[0].value;
-            sendAjax('http://localhost:3010/email/ajax', {'email' :  email, 'pwd':pwd} );
+            sendAjax('http://localhost:3010/login', {'email' :  email, 'pwd':pwd} );
         })
         function sendAjax(url, data){
 
@@ -32,8 +33,8 @@
             xhr.addEventListener('load', function(){
                 var result = JSON.parse(xhr.responseText);
                 var resultDiv = document.querySelector('.result');
-                if(result.result !== 'ok') resultDiv.innerHTML = 'your email not found';
-                else resultDiv.innerHTML = result.name;
+                if(result.email) resultDiv.innerHTML = 'welcome'+result.email;
+                else resultDiv.innerHTML = result;
             })
         }
     </script>
